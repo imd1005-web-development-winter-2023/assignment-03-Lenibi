@@ -39,6 +39,68 @@ main {
   align-items: center;
 }
 
+.quadrants{
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+}
+.section buttons{
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+}
+.button1{
+  width: 100%;
+  place-self: center stretch;
+  background-color: #e63946;
+}
+
+
+.logo{
+  justify-self: center;
+}
+.logoImage{
+  height: 100px;
+}
+.list{
+  
+}
+section{
+  border: solid red 1px; 
+}
+
+div{
+  border: solid blue 1px; 
+}
+
+/*When the screen is less than 800px (for mobile usually)*/
+@media only screen and (max-width: 800px) {
+  .quadrants{
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .header {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .buttons{
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 50% 50%;
+  }
+}
+
+
+
+
+
+
+
+
+
 /*
   Screen reader text utility class
 */
