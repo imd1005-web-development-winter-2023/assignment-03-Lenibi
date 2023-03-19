@@ -20,6 +20,18 @@
   /* Body configuration */
   --body-default-colour: var(--colour-cello);
   --body-background-colour: var(--colour-peppermint);
+
+
+
+  /* My Colours */
+  --darkblue: #18323d;
+  --darkbluehover: #404f56;
+
+  --blue: #43839a;
+  --bluehover: #274b57;
+
+  --lightblue: #c2e8f6;
+  --lightbluehover: #839da6;
 }
 
 /*
@@ -27,9 +39,16 @@
 */
 body {
   font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  /*
   color: var(--body-default-colour);
   background-color: var(--body-background-colour);
+  */
+  background-color: var(--lightblue);
+  /* Make page unscrollable (gets rid of excess page area) */
+  overflow-y: hidden;
 }
+
 
 main {
   min-height: 100vh;
@@ -37,37 +56,123 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+
+ 
+}
+
+/*Custom font*/
+@font-face {
+  font-family: "AlarmClock";
+  src: url(alarm\ clock.ttf);
 }
 
 .quadrants{
+  height: 100%;
   display: grid;
   grid-template-columns: 300px 1fr;
+  grid-template-rows: 100px 1fr;
 }
 
 .header {
+  background-color: var(--blue);
+  color: var(--darkblue);
   display: grid;
   grid-template-columns: 1fr 200px;
 }
-.section buttons{
+
+.scramble{
+  place-self: center;
+  font-size: 300%;
+}
+.buttons{
   display: grid;
-  grid-template-rows: 1fr 1fr;
 }
 .button1{
+  border: none;
   width: 100%;
-  place-self: center stretch;
-  background-color: #e63946;
+  height: 100%;
+  background-color: var(--darkblue);
+  color: white;
 }
-
-
-.logo{
-  justify-self: center;
+.button1:hover{
+  background-color: var(--darkbluehover);
 }
-.logoImage{
-  height: 100px;
+.button2{
+  border: none;
+  width: 100%;
+  background-color: transparent;
+}
+.button2:hover{
+  background-color: var(--bluehover);
 }
 .list{
+  background-color: var(--blue);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+.sessionTopGrid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.sessionMiddle{
+  
+  overflow-x: hidden;
+  
+  overflow-y: scroll;
+  /*height: 1fr;*/
+}
+
+/*
+  Hiding the scroll bar, but still allowing for scrolling
+*/
+.sessionMiddle::-webkit-scrollbar{
+  display: none;
+}
+
+.sessionMiddleGrid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.sessionBottom{
   
 }
+
+.logo{
+  background-color: var(--darkblue);
+  display: grid;
+ 
+}
+.logoImage{
+  place-self: center;
+  height: 100px;
+}
+.timer{
+  display: grid;
+  color: var(--darkblue);
+}
+.timerContainer{
+  place-self: center;
+  text-align: center;
+}
+
+.time{
+  font-family: AlarmClock;
+  font-weight: bolder;
+  font-size: 1500%;
+}
+
+.ao5, .ao12{
+  font-size: 300%;
+}
+.ao5:hover, .ao12:hover {
+  background-color: var(--lightbluehover);
+}
+
+
+
+/*
+Borders around sections and divs to help visualize what is going on
+
 section{
   border: solid red 1px; 
 }
@@ -75,7 +180,7 @@ section{
 div{
   border: solid blue 1px; 
 }
-
+*/
 /*When the screen is less than 800px (for mobile usually)*/
 @media only screen and (max-width: 800px) {
   .quadrants{
@@ -91,6 +196,14 @@ div{
     grid-template-rows: 1fr;
     grid-template-columns: 50% 50%;
   }
+  .time{
+    font-size: 500%;
+  }
+  .ao5, .ao12, .scramble{
+    font-size: 150%;
+  }
+
+  
 }
 
 
