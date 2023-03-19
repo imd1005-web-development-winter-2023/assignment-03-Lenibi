@@ -1,91 +1,230 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Set the page title -->
-    <title>Assignment 03</title>
+/*
+  CSS File
+*/
 
-    <!-- Set the charset we're using to UTF-8 -->
-    <meta charset="UTF-8" />
+/*
+ VARIABLES
+*/
+:root {
+  /* Core colours */
+  /* https://coolors.co/palette/e63946-f1faee-a8dadc-457b9d-1d3557 */
+  --colour-amaranth: #e63946;
+  --colour-peppermint: #f1faee;
+  --colour-aquaisland: #a8dadc;
+  --colour-wedgewood: #457b9d;
+  --colour-cello: #1d3557;
 
-    <!-- Set the screens default zoom / scale to 1 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  /* Header configuration */
+  --header-heading-colour: var(--colour-peppermint);
 
-    <!-- We are using a CSS Reset file to standardize browser default css -->
-    <link rel="stylesheet" href="reset.css" />
+  /* Body configuration */
+  --body-default-colour: var(--colour-cello);
+  --body-background-colour: var(--colour-peppermint);
 
-    <!-- This is where all of our awesome CSS code goes -->
-    <link rel="stylesheet" href="style.css" />
 
-    <!-- Set the Favicon  -->
-    <link rel="icon" href="./images/favicon/rocket.svg" type="image/svg+xml" />
-  </head>
-  <body>
-    <section class="quadrants">
-        <section class="test logo">
-            <img class="logoImage" src="cube.jpg" alt="logo">
-        </section>
-        <section class="test header">
-            <div class="scramble">sfdhjkfdhdfsjkhfdsa</div>
-            <section class="buttons">
-              <div class="button1container"><button class="button1 previousButton">Previous</button></div>
-              <div class="button1container"><button class="button1 nextButton">Next</button></div>
-                
-            </section>
-        </section>
-        <section class="test list">
-            <section class="sessionTop">
-                <button class="sessionButton">Session 1</button>
-                <section class="sessionTopGrid">
-                  <button class="listNum">Num</button>
-                  <button class="listTime">Time</button>
-                  <button class="listAo5">Ao5</button>
-                  <button class="listAo12">Ao12</button>
-                </section>
-            </section>
-            <section class="sessionMiddle">
-                <section class="sessionMiddleGrid">
-                    <button class="listNum_1">1</button>
-                    <button class="listTime_1">1.00</button>
-                    <button class="listAo5_1">-</button>
-                    <button class="listAo12_1">-</button>
-                </section>
-            </section>
-            <section class="sessionBottom">
-              <section class="sessionTopGrid">
-                <button class="best">Best</button>
-                <button class="bestTime">1.00</button>
-                <button class="bestAo5">-</button>
-                <button class="bestAo12">-</button>
-              </section>
-              <button class="clearButton">Clear</button>
-          </section>
-        </section>
-        <section class="test timer">
-          <div class="time">0:32</div>
-          <div class="ao5">Ao5:-</div>
-          <div class="ao12">Ao12:-</div>
-        </section>
-    </section>
-    <!--
 
-      ADD YOUR ASSIGNMENT 03 CODE
+  /* My Colours */
+  --darkblue: #18323d;
+  --darkbluehover: #404f56;
 
-      YOU MAY REMOVE THE BOILERPLATE CODE BELOW
+  --blue: #43839a;
+  --bluehover: #274b57;
 
-      IMPORTANT CHECKLIST:
+  --lightblue: #c2e8f6;
+  --lightbluehover: #839da6;
+}
 
-      - Are users able to create and delete to do list items?
-      - Have you set a favicon? (included - but it's a rocket)
-      - Do you have a css reset file? (included)
-      - Has a team member conducted a code review and left a GitHub Issue in your repo?
-      - Have you conducted a code review and left a GitHub Issue on your team member's repo?
+/*
+  PAGE / BODY
+*/
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  /*
+  color: var(--body-default-colour);
+  background-color: var(--body-background-colour);
+  */
+  background-color: var(--lightblue);
+  /* Make page unscrollable (gets rid of excess page area) */
+  overflow-y: hidden;
+}
 
-    -->
-    <main>
-      <div id="app"></div>
-    </main>
 
-    <!-- This is where we add our awesome JavaScript code -->
-    <script src="./main.js"></script>
-  </body>
-</html>
+main {
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+ 
+}
+
+/*Custom font*/
+@font-face {
+  font-family: "AlarmClock";
+  src: url(alarm\ clock.ttf);
+}
+
+.quadrants{
+  height: 100%;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: 100px 1fr;
+}
+
+.header {
+  background-color: var(--blue);
+  color: var(--darkblue);
+  display: grid;
+  grid-template-columns: 1fr 200px;
+}
+
+.scramble{
+  place-self: center;
+  font-size: 300%;
+}
+.buttons{
+  display: grid;
+}
+.button1{
+  border: none;
+  width: 100%;
+  height: 100%;
+  background-color: var(--darkblue);
+  color: white;
+}
+.button1:hover{
+  background-color: var(--darkbluehover);
+}
+.button2{
+  border: none;
+  width: 100%;
+  background-color: transparent;
+}
+.button2:hover{
+  background-color: var(--bluehover);
+}
+.list{
+  background-color: var(--blue);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+.sessionTopGrid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.sessionMiddle{
+  
+  overflow-x: hidden;
+  
+  overflow-y: scroll;
+  /*height: 1fr;*/
+}
+
+/*
+  Hiding the scroll bar, but still allowing for scrolling
+*/
+.sessionMiddle::-webkit-scrollbar{
+  display: none;
+}
+
+.sessionMiddleGrid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.sessionBottom{
+  
+}
+
+.logo{
+  background-color: var(--darkblue);
+  display: grid;
+ 
+}
+.logoImage{
+  place-self: center;
+  height: 100px;
+}
+.timer{
+  display: grid;
+  color: var(--darkblue);
+}
+.timerContainer{
+  place-self: center;
+  text-align: center;
+}
+
+.time{
+  font-family: AlarmClock;
+  font-weight: bolder;
+  font-size: 1500%;
+}
+
+.ao5, .ao12{
+  font-size: 300%;
+}
+.ao5:hover, .ao12:hover {
+  background-color: var(--lightbluehover);
+}
+
+
+
+/*
+Borders around sections and divs to help visualize what is going on
+
+section{
+  border: solid red 1px; 
+}
+
+div{
+  border: solid blue 1px; 
+}
+*/
+/*When the screen is less than 800px (for mobile usually)*/
+@media only screen and (max-width: 800px) {
+  .quadrants{
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .header {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .buttons{
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 50% 50%;
+  }
+  .time{
+    font-size: 500%;
+  }
+  .ao5, .ao12, .scramble{
+    font-size: 150%;
+  }
+
+  
+}
+
+
+
+
+
+
+
+
+
+/*
+  Screen reader text utility class
+*/
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
