@@ -70,14 +70,14 @@ main {
   height: 100%;
   display: grid;
   grid-template-columns: 300px 1fr;
-  grid-template-rows: 100px 1fr;
+  grid-template-rows: 0.1fr 1fr;
 }
 
 .header {
   background-color: var(--blue);
   color: var(--darkblue);
   display: grid;
-  grid-template-columns: 1fr 200px;
+  grid-template-columns: 1fr 0.11fr;
 }
 
 .scramble{
@@ -94,6 +94,13 @@ main {
   background-color: var(--darkblue);
   color: white;
 }
+.button1Clicked{
+  border: none;
+  width: 100%;
+  height: 100%;
+  background-color: var(--blue);
+  color: white;
+}
 .button1:hover{
   background-color: var(--darkbluehover);
 }
@@ -105,10 +112,15 @@ main {
 .button2:hover{
   background-color: var(--bluehover);
 }
+.button2Blank{
+  border: none;
+  width: 100%;
+  background-color: transparent;
+}
 .list{
   background-color: var(--blue);
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
 }
 .sessionTopGrid{
   display: grid;
@@ -120,6 +132,9 @@ main {
   
   overflow-y: scroll;
   /*height: 1fr;*/
+  height: 80vh;
+  
+  display: grid;
 }
 
 /*
@@ -130,11 +145,14 @@ main {
 }
 
 .sessionMiddleGrid{
+  margin-left: -30px;
+  margin-right: -10px;
+  width: 1fr;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 }
 .sessionBottom{
-  
+ 
 }
 
 .logo{
@@ -151,24 +169,140 @@ main {
   color: var(--darkblue);
 }
 .timerContainer{
+  /*
   place-self: center;
+  */
   text-align: center;
 }
 
 .time{
+  margin-top: 8%;
   font-family: AlarmClock;
   font-weight: bolder;
   font-size: 1500%;
+  margin-bottom: -50px;
+}
+
+.averagesContainer{
+  /*border: red solid 1px;*/
+  width: 100%;
+  display: grid;
 }
 
 .ao5, .ao12{
   font-size: 300%;
+  place-self: center;
+  text-align: center;
+  width: auto;
 }
+
+.sessionTopButtons{
+  display: grid;
+  /*grid-template-columns: 1fr 30%;*/
+}
+
 .ao5:hover, .ao12:hover {
   background-color: var(--lightbluehover);
 }
 
+.redText{
+  color: red;
+}
+.greenText{
+  color: rgb(0, 255, 0);
+}
+.centered{
+  margin-top: 0%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /*
+  transform: translate(50%, 50%);
+  top: 50%;
+  left: 50%;
+  margin-top: 0px;
+  */
+  
+}
+.hidden{
+  opacity:0;
+}
 
+ul {
+  list-style-type: none;
+  
+}
+
+.sessionMiddleList{
+  width: 100%;
+}
+.listItem{
+  margin-left: -10px;
+}
+
+/*Pop up code*/
+.popUp1{
+  background-color: white;
+  border: var(--darkblue) solid 2px;
+  position: fixed;
+top: 50%;
+left: 50%;
+
+transform: translate(-50%, -50%);
+}
+
+.popUp1Grid2{
+  margin-left: 10%;
+  margin-right: 10%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  
+}
+
+.popUp1Back, .popUp1Delete{
+  place-self: center;
+  width: 50%;
+  background-color: var(--blue);
+  text-align: center;
+}
+
+.popUp1Buttons{
+  display: grid;
+  grid-template-columns: auto auto;
+  text-align: center;
+  column-gap: 10px;
+}
+.popUp1Grid{
+  display: grid;
+  grid-template-columns: 70% 30%;
+}
+.add2Button, .DNFButton{
+  background-color: var(--lightblue);
+}
+
+
+/*Pop up 2*/
+/*Pop up code*/
+.popUp2{
+  background-color: white;
+  border: var(--darkblue) solid 2px;
+  position: fixed;
+top: 50%;
+left: 50%;
+
+transform: translate(-50%, -50%);
+}
+.popUp2Back{
+  place-self: center;
+  width: 30%;
+  background-color: var(--blue);
+  text-align: center;
+}
+
+.popUp2BackContainer{
+  display: grid;
+}
 
 /*
 Borders around sections and divs to help visualize what is going on
@@ -180,7 +314,14 @@ section{
 div{
   border: solid blue 1px; 
 }
+ul{
+  border: solid yellow 1px; 
+}
+li{
+  border: solid green 1px; 
+}
 */
+
 /*When the screen is less than 800px (for mobile usually)*/
 @media only screen and (max-width: 800px) {
   .quadrants{
@@ -190,17 +331,34 @@ div{
   .header {
     display: grid;
     grid-template-columns: 1fr;
+    margin-bottom: 30px;
   }
   .buttons{
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 50% 50%;
+    height: 40px;
+    margin-top: -10px;
+    margin-bottom: 0px;
   }
   .time{
     font-size: 500%;
+    margin-bottom: -25px;
+    margin-top: -10px;
   }
   .ao5, .ao12, .scramble{
     font-size: 150%;
+  }
+
+  .sessionMiddle{
+    height: 10vh;
+  }
+  .list{
+    margin-top: -98px;
+  }
+  .timerContainer{
+    display: grid;
+    grid-template-columns: auto auto auto;
   }
 
   
