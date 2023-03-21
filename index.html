@@ -27,47 +27,87 @@
         <section class="test header">
             <div class="scramble">D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R'</div>
             <section class="buttons">
-              <div class="button1container"><button class="button1 previousButton">Previous</button></div>
-              <div class="button1container"><button class="button1 nextButton">Next</button></div>
+              <div class="button1container"><button class="button1Clicked previousButton" onclick="previousButtonClick()">Previous</button></div>
+              <div class="button1container"><button class="button1 nextButton" onclick="nextButtonClick()">Next</button></div>
             </section>
         </section>
         <section class="test list">
             <section class="sessionTop">
-                <button class="button2 sessionButton">Session 1</button>
+              <div class="sessionTopButtons"> 
+                <!--<button class="button2 sessionButton">Session 1</button>-->
+                <button class="button2 clearButton" onclick="clearSession()">Clear</button>
+              </div>
                 <section class="sessionTopGrid">
-                  <button class="button2 listNum">Num</button>
-                  <button class="button2 listTime">Time</button>
-                  <button class="button2 listAo5">Ao5</button>
-                  <button class="button2 listAo12">Ao12</button>
+                  <button class="button2Blank listNum">Num</button>
+                  <button class="button2Blank listTime">Time</button>
+                  <button class="button2Blank listAo5">Ao5</button>
+                  <button class="button2Blank listAo12">Ao12</button>
+                </section>
+                <section class="sessionTopGrid">
+                  <button class="button2Blank best">Best</button>
+                  <button class="button2 bestTime">-</button>
+                  <button class="button2 bestAo5">-</button>
+                  <button class="button2 bestAo12">-</button>
                 </section>
             </section>
             <section class="sessionMiddle">
-                <section class="sessionMiddleGrid">
-                    <button class="button2 listNum_1">1</button>
-                    <button class="button2 listTime_1">1.00</button>
-                    <button class="button2 listAo5_1">-</button>
-                    <button class="button2 listAo12_1">-</button>
-                </section>
+              <ul class="sessionMiddleList" id="ulList">
+                <!--
+                <li class="sessionMiddleGrid">
+                  <button class="button2 listItem">1</button>
+                  <button class="button2 listItem">1</button>
+                  <button class="button2 listItem">1</button>
+                  <button class="button2 listItem">1</button>
+                </li>
+                -->
+              </ul>
+                    
             </section>
             <section class="sessionBottom">
               <section class="sessionTopGrid">
-                <button class="button2 best">Best</button>
-                <button class="button2 bestTime">1.00</button>
-                <button class="button2 bestAo5">-</button>
-                <button class="button2 bestAo12">-</button>
+                
               </section>
-              <button class="button2 clearButton">Clear</button>
+              
           </section>
         </section>
         <section class="test timer">
           <div class="timerContainer">
             <div class="time">0:00</div>
-            <div class="ao5">Ao5:-</div>
-            <div class="ao12">Ao12:-</div>
+            <div class="averagesContainer"><div class="ao5">Ao5: -</div></div>
+            <div class="averagesContainer"><div class="ao12">Ao12: -</div></div>
           </div>
-          
         </section>
     </section>
+
+    <div class="popUp1 hidden">
+      <section class="popUp1Grid">
+        <div class="popUp1SolveText">Solve 1: 0:00</div>
+        <section class="popUp1Buttons">
+          <div class="add2Button" onclick="popUp1add2Click()">+2</div>
+          <div class="DNFButton" onclick="popUp1DNFClick()">DNF</div>
+        </section>
+      </section>
+      <div class="popUp1ScrambleText">Scramble: D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R'</div>
+      <section class="popUp1Grid2">
+        <div class="popUp1Back" onclick="pop1UpBackClick()">Back</div>
+        <div class="popUp1Delete" onclick="popUp1DeleteClick()">Delete</div>
+      </section>
+    </div>
+
+
+    <div class="popUp2 hidden">
+      <div class="popUp2AverageText">Average of 5: 0:00</div>
+      <div class="popUp2ScrambleText">Time List: <br>
+      1. (0.20) D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R' <br>
+      2. 0.20 D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R' <br>
+      3. 0.20 D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R' <br>
+      4. 0.20 D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R' <br>
+      5. (0.20) D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R' <br>
+      </div>
+      <div class="popUp2BackContainer">
+        <div class="popUp2Back" onclick="popUp2BackClick()">Back</div>
+      </div>
+    </div>
     <!--
 
       ADD YOUR ASSIGNMENT 03 CODE
