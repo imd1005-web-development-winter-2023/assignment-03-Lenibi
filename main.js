@@ -13,7 +13,6 @@ const ao12 = document.getElementsByClassName("ao12")[0];
 
 let timerIsRunning = false;
 let timerCounter = 0;
-let timeText;
 let interval = setInterval(timerCount, 10);
 clearInterval(interval);
 //creating an array of buttons for the list
@@ -39,6 +38,11 @@ let bestTime = "-";
 let bestAo5 = "-";
 let bestAo12 = "-";
 
+//need to keep track of the index for the popups
+let bestTimeIndex = 0;
+let bestAo5Index = 0;
+let bestAo12Index = 0;
+
 //scramble
 let firstScramble = newScramble();
 let currentScramble = firstScramble;
@@ -52,8 +56,27 @@ let previousIsClicked = true;
 //scrable array
 let scrambleArray = [];
 
+//must keep track of highest and lowest numbers in averages
+let ao5Lowest = [];
+let ao5Highest = [];
+let ao12Lowest = [];
+let ao12Highest = [];
+
+//must keep track of indexes for the popups
+let bestIndex= [0,0,0];
+
+//must keep track of which times have a +2
+let add2Array = [];
+//must keep track of which times have a DNF
+let DNFArray = [];
+
+
 //Making the timer
 document.addEventListener("keydown",function(event){
+    //hide popups
+    document.querySelector(".popUp1").classList.add("hidden");
+    document.querySelector(".popUp2").classList.add("hidden");
+
     //If the spacebar is held down
     if (event.keyCode===32){
       //When the space bar is held down, it adds 1 to the timer (every frame update?)
@@ -85,6 +108,8 @@ document.addEventListener("keydown",function(event){
           //console.log("stopped");
           clearInterval(interval);
 
+          let timeText = convertToTimeText(timerCounter);
+          /*
           //Text is set to hundreths
           if (timerCounter/6000>=1){
             //console.log("minutes");
@@ -118,8 +143,9 @@ document.addEventListener("keydown",function(event){
             //if multiple of 10 add a 0 at the end
             timeText+="0";
           }
+          */
 
-          //sets the text of the timerText
+          //converts the time to text and sets it to the innerHTML
           timerText.innerHTML = timeText;
 
           //timer is not longer running
@@ -136,7 +162,7 @@ document.addEventListener("keydown",function(event){
           ao12.classList.remove("hidden");
           
           //Creates a new row
-          addListRow();
+          addListRow(timeText);
 
           //testing that the scroll works if the list is filled up
           /*
@@ -144,8 +170,6 @@ document.addEventListener("keydown",function(event){
             addListRow();
           }
           */
-         
-          
 
           //Reset the time
           timerCounter=0;
@@ -177,7 +201,7 @@ document.addEventListener("keyup",function(event){
   }
 });
 
-function timerCount(){
+function timerCount(timeText){
   //adds a hundreth each time
   //timerCounter+=0.01;
   //this have me a bug where the number is 11.999999999 instead of 12 and etc.
@@ -225,7 +249,7 @@ function timerCount(){
   timerText.innerHTML = timeText;
 }
 
-function addListRow(){
+function addListRow(timeText){
   console.log("new row added");
   //create variables
   const ul = document.querySelector("#ulList");
@@ -277,7 +301,7 @@ function addListRow(){
   buttonsArray[1+(numberOfRows*4)].innerHTML=timeText.toString();
   
   //Calculate the averages
-  calculateAverages();
+  calculateAverageAtRow(numberOfRows,0,2);
 
   //check bests
   checkBests();
@@ -288,42 +312,42 @@ function addListRow(){
   //get a new scramble
   nextButtonClick();
 
+  //+2Array and DNF array
+  add2Array[numberOfRows]=-1;
+  DNFArray[numberOfRows]=-1;
 
   //adding 1 to the row counter
   numberOfRows++;
 }
 
 
-function calculateAverages(){
+function calculateAverageAtRow(rowIndex,start,end){
     //calculating ao5 and ao12 using a for loop of 2 because same thing with different variables and values
-    for (let j=0;j<2;j++){
+    for (let j=start;j<end;j++){
 
 
       //variables average for loop
-      let averageArray = []; //or12
-      let averageTextArray = []; //or12
+      let averageArray = []; 
+      let averageTextArray = []; 
   
   
-      let averageSize=5; //or 12
-      let buttonIndex = 2; //or 3
-      if (j==1){
-        //variables average for loop
-        averageSize=12;
-        buttonIndex = 3;
-      }
+      let averageSize= [5,12];
+      let buttonIndex = [2,3];
   
-      //if averageSize or more items currently
-      if(numberOfRows>averageSize-2){
-        //console.log("5 or more");
+      
+      let averageToCheck=[ao5Array,ao12Array];
+      //if averageSize or more times currently (ao5 only starts after 5 times and ao12 starts after 12 times)
+      if(timeArray.length>=averageSize[j]){
+        console.log("5 or more");
         //calculate average
         //Cubing averages are not a simple mean,
         //the highest and lowest values are dropped
         //i will put all values in a new array to not change the original ones
         let tempTimes = [];
-        for(let i=0; i<averageSize;i++){
+        for(let i=0; i<averageSize[j];i++){
           //console.log((timeArray[numberOfRows-4+i]).toString());
           //getting the averageSize most recent values into an array
-          tempTimes[i]=timeArray[numberOfRows-averageSize+1+i];
+          tempTimes[i]=timeArray[rowIndex-averageSize[j]+1+i];
         }
         
         console.log(tempTimes);
@@ -331,7 +355,7 @@ function calculateAverages(){
         //finding lowest number and setting to -1
         let lowestNum = tempTimes[0];
         let lowestNumIndex = 0;
-        for(let i=1; i<averageSize;i++){ 
+        for(let i=1; i<averageSize[j];i++){ 
           if (tempTimes[i]<lowestNum){
             lowestNum=tempTimes[i];
             lowestNumIndex=i;
@@ -343,7 +367,7 @@ function calculateAverages(){
         //finding highest number and setting to -1
         let highestNum = tempTimes[0];
         let highestNumIndex = 0;
-        for(let i=1; i<averageSize;i++){ 
+        for(let i=1; i<averageSize[j];i++){ 
           if (tempTimes[i]>highestNum){
             highestNum=tempTimes[i];
             highestNumIndex=i;
@@ -351,16 +375,24 @@ function calculateAverages(){
         }
         console.log("highest: "+highestNum);
         tempTimes[highestNumIndex]=-1;
-  
+        
   
         console.log(tempTimes);
         
-  
+        //store the highest and lowest for the popups when clicked
+        if(averageSize[j]==5){
+          ao5Lowest[numberOfRows]=lowestNum;
+          ao5Highest[numberOfRows]=highestNum;
+        } else {
+          ao12Lowest[numberOfRows]=lowestNum;
+          ao12Highest[numberOfRows]=highestNum;
+        }
+
         // I can find the mean with the highest and lowest values dropped
         
         let sum = 0;
         let newAverage = 0;
-        for(let i=0; i<averageSize;i++){
+        for(let i=0; i<averageSize[j];i++){
           //adding the numbers and ignoring -1
           if(tempTimes[i]!=-1){
             sum+=tempTimes[i];
@@ -368,7 +400,7 @@ function calculateAverages(){
           
         }
         //dividing the sum by averageSize-2
-        newAverage = sum/(averageSize-2);
+        newAverage = sum/(averageSize[j]-2);
         //no decimal places and rounding
         //console.log("before: "+newAo5);
         newAverage = newAverage.toFixed(0);
@@ -376,19 +408,23 @@ function calculateAverages(){
   
         //storing the value in the array
         averageArray[numberOfRows]=newAverage;
-        if (j==0){
-          ao5Array[numberOfRows]=newAverage;
-        } else {
-          ao12Array[numberOfRows]=newAverage;
-        }
+        averageToCheck[j][numberOfRows]=newAverage;
   
-        //this is hundreths, i need seconds, and i need to convert this to time text format with :
-        let averageText = "";
+        //this is hundreths, i need seconds, and i need to convert this to time text format
+        let averageText = convertToTimeText(newAverage);
+
+
+
+
+
+        
         //using code from earlier to convert time to text
   
   
       //console.log(timerCounterTenths);
-  
+
+      
+  /*
       //Must account for minutes:
       //If the timerCounter / 600 is 1 or greater, change the text by showing minutes ':' and leftover seconds
       if (newAverage/6000>=1){
@@ -419,39 +455,40 @@ function calculateAverages(){
       } else if ((newAverage)%10==0){
         averageText+="0";
       }
-  
+      */
+      
       //Now that the average time has been converted into text format,
       //I place that value in the array
-        averageTextArray[numberOfRows]=averageText;
+        averageTextArray[rowIndex]=averageText;
         //placing into exterior array
       if (j==0){
-        ao5TextArray[numberOfRows]=averageText;
+        ao5TextArray[rowIndex]=averageText;
       } else {
-        ao12TextArray[numberOfRows]=averageText;
+        ao12TextArray[rowIndex]=averageText;
       }
   
       } else {
         //if not at least averageSize numbers, the value is -
-        averageArray[numberOfRows]="-";
-        averageTextArray[numberOfRows]="-";
+        averageArray[rowIndex]="-";
+        averageTextArray[rowIndex]="-";
         //placing into exterior array
       if (j==0){
-        ao5TextArray[numberOfRows]="-";
+        ao5TextArray[rowIndex]="-";
       } else {
-        ao12TextArray[numberOfRows]="-";
+        ao12TextArray[rowIndex]="-";
       }
       }
   
       
       //setting the time text from array onto the button
-      buttonsArray[buttonIndex+(numberOfRows*4)].innerHTML=(averageTextArray[numberOfRows]).toString();
+      buttonsArray[buttonIndex[j]+(rowIndex*4)].innerHTML=(averageTextArray[rowIndex]).toString();
       //setting the time text from array onto the middle text
       const ao5Text = document.getElementsByClassName("ao5")[0];
       const ao12Text = document.getElementsByClassName("ao12")[0];
       if (j==0){
-        ao5Text.innerHTML="Ao5: "+((averageTextArray[numberOfRows]).toString());
+        ao5Text.innerHTML="Ao5: "+((averageTextArray[rowIndex]).toString());
       } else {
-        ao12Text.innerHTML="Ao12: "+((averageTextArray[numberOfRows]).toString());
+        ao12Text.innerHTML="Ao12: "+((averageTextArray[rowIndex]).toString());
       } 
       
 
@@ -522,42 +559,50 @@ function checkBests(){
   */
 
 
-let bestSize = 0;
-
-//arrays
-let lengthArray = [timeArray.length,ao5Array.length,ao12Array.length];
-let arrays = [timeArray,ao5Array,ao12Array];
-let textArrays = [timerTextArray,ao5TextArray,ao12TextArray];
-let buttonsArray = [bestTimeButton,bestAo5Button,bestAo12Button];
-let bestSizeArray = [0,4,11];
- for(let i = 0; i<3;i++){
-  //If there is at least bestSize time
-  if(lengthArray[i]>bestSizeArray[i]){
-    //checking time
-    bestTime=timeArray[bestSize];
-
-    //must keep track of index
-    let index = bestSizeArray[i];
-    for(let j = bestSizeArray[i]; j<lengthArray[i];j++){
-      
-
-      if(arrays[i][j]<bestTime){
-        //if a time is the smallest, it will become the new best
-        bestTime=arrays[i][j];
-        bestSizeArray[i] =index;
-      }
-      index++;
-    }
-    /*
-    timeArray.forEach(num => {
-      if (num!="-"){
-        
-      }
-    });*/
-  //change button text
-  buttonsArray[i].innerHTML=textArrays[i][bestSizeArray[i]];
-  }
   
+
+  //The same thing repeats 3 times but with different variaables and values,
+  //so instead of copying the same code 3 times with different variables and values
+  //I used a for loop to avoid repetition
+
+  //Should have used a function here and chosen the variables using
+  //parameters instead of using arrays with variables and a for loop.
+  //Arrays also work but it's really hard to follow and understand
+
+  //let bestSize = 0;
+
+  //arrays
+  let lengthArray = [timeArray.length,ao5Array.length,ao12Array.length];
+  let arrays = [timeArray,ao5Array,ao12Array];
+  let textArrays = [timerTextArray,ao5TextArray,ao12TextArray];
+  let buttonsArray = [bestTimeButton,bestAo5Button,bestAo12Button];
+  let bestSizeArray = [0,4,11];
+  
+
+  let bestTimeArray = [bestTime,bestAo5,bestAo12];
+  for(let i = 0; i<3;i++){
+    //If there is at least 1 bestSize time
+    let bestIndexTemp = bestSizeArray[i];
+    if(lengthArray[i]>bestSizeArray[i]){
+      console.log("I GOT IN",i);
+      //checking time
+      bestTimeArray[i]=arrays[i][bestSizeArray[i]];
+
+      //must keep track of index
+      //let index = bestSizeArray[i];
+      for(let j = bestSizeArray[i]; j<lengthArray[i];j++){
+        if(arrays[i][j]<bestTimeArray[i]){
+          //if a time is the smallest, it will become the new best
+          bestTimeArray[i]=arrays[i][j];
+          //bestSizeArray[i]=index;  
+          bestIndexTemp=j;
+        }
+        //index++;
+      }
+      //change button text
+      bestIndex[i]=bestIndexTemp;
+      buttonsArray[i].innerHTML=textArrays[i][bestIndexTemp];
+    }
   }
  }
   
@@ -583,6 +628,15 @@ function clearSession(){
     ao12Array=[];
     ao12TextArray=[];
     liList=[];
+    ao5Lowest=[];
+    ao5Highest=[];
+    ao12Lowest=[];
+    ao12Highest=[];
+
+    /*
+    bestIndex = 0;
+    bestAo5Index=0;
+    bestAo12Index=0;*/
 
     //clear rows
     numberOfRows=0;
@@ -603,29 +657,167 @@ function buttonClick(buttonIndex){
   if (buttonIndex%4==0||buttonIndex%4==1){
     //if first 2 rows, show popup1
     
+    let firstColumnIndex = 0;
     //remove popup1 hidden tag
     document.querySelector(".popUp1").classList.remove("hidden");
+    //hide popup2 (in case it was open)
+    document.querySelector(".popUp2").classList.add("hidden");
+
 
     //change the time and number change
     //must access from the array, need the row index
     //can get first column button index, and divide by 4
-    let firstColumnIndex = 0;
+    
     if (buttonIndex%4==1){
-      but
+      //if first column, -1 then divide by 4 to get row
+      firstColumnIndex = (buttonIndex-1)/4;
+      //console.log("row is: "+firstColumnIndex);
+    } else {
+      //else just divide by 4 to get row
+      firstColumnIndex = (buttonIndex)/4;
+      //console.log("row is: "+firstColumnIndex);
     }
+    //now that i have the row, i can set the proper values in the popup box
+    //setting the best num and time
+    document.querySelector(".popUp1SolveText").innerHTML=
+    //first is the solve num
+    "Solve "+
+    (firstColumnIndex+1).toString()+
+    //next is the time
+    ": "+
+    timerTextArray[firstColumnIndex];
 
+    //now i need the scramble
+    document.querySelector(".popUp1ScrambleText").innerHTML=
+    "Scramble: "+
+    scrambleArray[firstColumnIndex];
+
+
+    //DNF and +2 button
+    const add2Button = document.querySelector(".add2Button");
+    const DNFButton = document.querySelector(".DNFButton");
+    //give +2 and DNF buttons an index parameter
+    add2Button.setAttribute("onclick","popUp1ChangeButtonClick("+firstColumnIndex+",0)");
+    DNFButton.setAttribute("onclick","popUp1ChangeButtonClick("+firstColumnIndex+",1)");
+    //set the button colours (if clicked or not)
+    if (add2Array[firstColumnIndex]==-1){
+      //is unclicked
+      add2Button.classList.remove("button3Clicked");
+      add2Button.classList.add("button3");
+    } else {
+      //is clicked
+      add2Button.classList.remove("button3");
+      add2Button.classList.add("button3Clicked");
+    }
+    if (DNFArray[firstColumnIndex]==-1){
+      //is unclicked
+      DNFButton.classList.remove("button3Clicked");
+      DNFButton.classList.add("button3");
+    } else {
+      //is clicked
+      DNFButton.classList.remove("button3");
+      DNFButton.classList.add("button3Clicked");
+    }
   } else {
+    //else if last 2 rows, show popup2
     //if there is a value in the button (not -)
     if(buttonsArray[buttonIndex].innerHTML!="-"){
       //show popup2
       document.querySelector(".popUp2").classList.remove("hidden");
+      //hide popup1 (in case it was open)
+      document.querySelector(".popUp1").classList.add("hidden");
+      
+      //now i set the correct values
+      let averageTimeText = "";
+      //first I must know if it is an average of 5 or 12
+      let averageNum = 5;
+      //either in column with index 2 or 3 (last 2 columns)
+      if (buttonIndex%4==2){
+        //average of 5
+        firstColumnIndex=(buttonIndex-2)/4;
+        //getting the time
+        averageTimeText = ao5TextArray[firstColumnIndex];
+        //console.log(firstColumnIndex);
+        //console.log(averageTimeText);
+      } else {
+        //average of 12
+        averageNum=12;
+        firstColumnIndex=(buttonIndex-3)/4;
+        //getting the time
+        averageTimeText = ao12TextArray[firstColumnIndex];
+      }
+      
+      //now i set the proper values
+       //average of
+       document.querySelector(".popUp2AverageText").innerHTML=
+      "Average of "
+      +averageNum
+      +": "
+      +averageTimeText;
+
+      //now i need the scrambles and times using a for loop
+      let text = "Time List: ";
+      let lowestAverageArray = ao5Lowest;
+      let highestAverageArray = ao5Highest;
+      console.log("ao5Lowest: "+ao5Lowest);
+
+
+      if (averageNum==12){
+        lowestAverageArray=ao12Lowest;
+        highestAverageArray=ao12Highest;
+      }
+      let counter = 1;
+      let numberOfLowestNums = 0;
+      let numberOfHighestNums = 0;
+      for (let i=averageNum-1;i>-1;i--){
+        //add the scramble number and an enter
+        text+="<br>"+counter.toString()+". ";
+        counter++;
+
+        //console.log("timeArray: "+timeArray[firstColumnIndex-i]);
+        //console.log("lowest "+lowestAverageArray[firstColumnIndex]);
+
+        //if highest number or lowest number
+        if(timeArray[firstColumnIndex-i]==lowestAverageArray[firstColumnIndex]&&
+          numberOfLowestNums==0){
+          //add a bracket
+          text+="(";
+          console.log("lowest or highest");
+          //numberOfLowestNums++;
+        } else if (timeArray[firstColumnIndex-i]==highestAverageArray[firstColumnIndex]&&
+          numberOfHighestNums==0){
+           //add a bracket
+           text+="(";
+           console.log("lowest or highest");
+           //numberOfHighestNums++;
+        }
+        //time
+        text+=timerTextArray[firstColumnIndex-i];
+
+         //if highest number or lowest number
+         if(timeArray[firstColumnIndex-i]==lowestAverageArray[firstColumnIndex]&&
+          numberOfLowestNums==0){
+          //add a bracket
+          text+=")";
+          console.log("lowest or highest");
+          //to make sure no duplicate brackets if more than one lowest value
+          numberOfLowestNums++;
+        } else if (timeArray[firstColumnIndex-i]==highestAverageArray[firstColumnIndex]&&
+          numberOfHighestNums==0){
+           //add a bracket
+           text+=")";
+           console.log("lowest or highest");
+           //to make sure no duplicate brackets if more than one highest value
+           numberOfHighestNums++;
+        }
+
+        //add the scramble
+        text+=" "+scrambleArray[firstColumnIndex-i];
+      }
+      console.log(text);
+      document.querySelector(".popUp2ScrambleText").innerHTML=text;
     }
-    
   }
-
-  
-
-
 }
 
 function newScramble(){
@@ -738,22 +930,291 @@ function nextButtonClick(){
     previousScrambleButton.classList.add("button1");
   }
 }
-//
+
+//best buttons click
+function bestTimeClick(){
+  
+  //if a time exists
+  if(timerTextArray.length>=1){
+    //if (averageTimeText.length>=averageNum){
+
+    //popup1
+    //remove popup1 hidden tag
+    document.querySelector(".popUp1").classList.remove("hidden");
+    //hide popup2 (in case it was open)
+    document.querySelector(".popUp2").classList.add("hidden");
 
 
+    //change the time
+    //must access from the array, need the row index
+    console.log(bestIndex[0]);
+
+    document.querySelector(".popUp1SolveText").innerHTML=
+    "Best Time: "+
+    //the time number
+    timerTextArray[bestIndex[0]];
+
+    //now i need the scramble
+    document.querySelector(".popUp1ScrambleText").innerHTML=
+    "Scramble: "+
+    scrambleArray[bestIndex[0]];
+  }
+}
+
+function bestAverageClick(averageNum, averageTimeText, index){
+  //if a best time exits
+  if (averageTimeText.length>=averageNum){
+    //show popup2
+    document.querySelector(".popUp2").classList.remove("hidden");
+    //hide popup1 (in case it was open)
+    document.querySelector(".popUp1").classList.add("hidden");
+
+    //now i set the proper values
+    //average of
+    document.querySelector(".popUp2AverageText").innerHTML=
+    "Best Average of "
+    +averageNum
+    +": "
+    +averageTimeText[bestIndex[index]];
+
+    //now i need the scrambles and times using a for loop
+    let text = "Time List: ";
+    let lowestAverageArray = ao5Lowest;
+    let highestAverageArray = ao5Highest;
+    console.log("ao5Lowest: "+ao5Lowest);
+
+
+    if (averageNum==12){
+      lowestAverageArray=ao12Lowest;
+      highestAverageArray=ao12Highest;
+    }
+    let counter = 1;
+    for (let i=averageNum-1;i>-1;i--){
+      //add the scramble number and an enter
+      text+="<br>"+counter.toString()+". ";
+      counter++;
+
+      //console.log("timeArray: "+timeArray[firstColumnIndex-i]);
+      //console.log("lowest "+lowestAverageArray[firstColumnIndex]);
+
+      //if highest number or lowest number
+      if(timeArray[bestIndex[index]-i]==lowestAverageArray[bestIndex[index]]||
+        timeArray[bestIndex[index]-i]==highestAverageArray[bestIndex[index]]){
+        //add a bracket
+        text+="(";
+        console.log("lowest or highest");
+      }
+      //time
+      text+=timerTextArray[bestIndex[index]-i];
+
+      //if highest number or lowest number
+      if(timeArray[bestIndex[index]-i]==lowestAverageArray[bestIndex[index]]||
+        timeArray[bestIndex[index]-i]==highestAverageArray[bestIndex[index]]){
+        //add a bracket
+        text+=")";
+      }
+
+      //add the scramble
+      text+=" "+scrambleArray[bestIndex[index]-i];
+    }
+    console.log(text);
+    document.querySelector(".popUp2ScrambleText").innerHTML=text;
+  }
+  
+}
 
 
 
 
 //pop up 1 clicks
-function popUp1add2ButtonClick(){
+
+//Add2 button click and DNF click are the same with different variables so I will
+//use a function with parameters and structs(or object literals) to avoid writing the same code twice
+let add2Variables = {
+  //add2
+  array: add2Array,
+  button1: document.querySelector(".add2Button"),
+  functions: 0,
+
+  //DNF
+  array2: DNFArray,
+  button2: document.querySelector(".DNFButton"),
+}
+
+let DNFVariables = {
+  //DNF
+  array: DNFArray,
+  button1: document.querySelector(".DNFButton"),
+  functions:1,
+
+  //add2
+  array2: add2Array,
+  button2: document.querySelector(".add2Button"),
+}
+
+
+function popUp1ChangeButtonClick(buttonIndex,buttonType){
+  let changeButton = add2Variables;
+  if (buttonType==1){
+    changeButton = DNFVariables;
+  }
+
+  //need the index of the button clicked
+  //when the button is clicked to open the popup, I will give the +2 and DNF button
+  //an onclick to this function, and the buttonIndex as a parameter
+  console.log("button index is: ",buttonIndex);
+
+  //i need to keep track if the button is clicked or not (toggle +2)
+  //i made an array called add2Array
+  //everytime a row is made, the add2Array at that index should be set to -1
+
+  console.log("add2Array: ",add2Array[buttonIndex]);
+  console.log("DNFArray: ",DNFArray[buttonIndex]);
+
+  //if -1 or unclicked, make it clicked
+  if (changeButton.array[buttonIndex]==-1){
+    changeButton.array[buttonIndex]*=-1;
+    //becomes clicked
+    changeButton.button1.classList.add("button3Clicked");
+    changeButton.button1.classList.remove("button3");
+    //add +2 or DNF to text and time 
+    //call function
+    if (changeButton.functions==0){
+      add2toTime(buttonIndex);
+    } else {
+      DNFtoTime(buttonIndex);
+    }
+  } else {
+    changeButton.array[buttonIndex]*=-1;
+    //becomes unclicked
+    changeButton.button1.classList.add("button3");
+    changeButton.button1.classList.remove("button3Clicked");
+    //reset +2 or DNF to text and time 
+    if (changeButton.functions==0){
+      resetAdd2toTime(buttonIndex);
+    } else {
+      resetDNFtoTime(buttonIndex);
+    }
+  }
+  //DNF becomes unclicked if it was clicked
+  if (changeButton.array2[buttonIndex]==1){
+    changeButton.button2.classList.remove("button3Clicked");
+    changeButton.button2.classList.add("button3");
+    changeButton.array2[buttonIndex]=-1;
+    //reset the other button (only 1 can be clicked at once)
+    if (changeButton.functions==0){
+      resetDNFtoTime(buttonIndex);
+    } else {
+      resetAdd2toTime(buttonIndex);
+    }
+  }
+  refreshTimes();
+}
+
+function add2toTime(buttonIndex){
+  console.log("add2Time");
+
+  console.log("before",timeArray[buttonIndex]);
+  //add 200 to the time
+  timeArray[buttonIndex]+=200;
+  console.log("after",timeArray[buttonIndex]);
+  
+  console.log("before",timerTextArray[buttonIndex]);
+  //now change the time text
+  timerTextArray[buttonIndex]=
+  //time
+  convertToTimeText(timeArray[buttonIndex])
+  //add (+2) to indicate that this is an edited time
+  +"(+2)";
+  console.log("after",timerTextArray[buttonIndex]);
+
+  //set text on the button
+  buttonsArray[buttonIndex*4+1].innerHTML=timerTextArray[buttonIndex];
+  
+  //now must calculate the averages and set update the list texts
+  refreshTimes();
 
 }
-function popUp1DNFClick(){
+
+
+function resetAdd2toTime(buttonIndex){
+
+}
+function DNFtoTime(buttonIndex){
+
+}
+function resetDNFtoTime(buttonIndex){
   
 }
-function popUp1BackClick(){
+function refreshTimes(){
+  //calculate averages
+  //i must use a for loop and check update all the rows
+
+  //updating averages of 5
+  for (let i = 4;i<timeArray.length;i++){
+    calculateAverageAtRow(i,0,1);
+  }
+  //updating averages of 12
+  for (let i = 11;i<timeArray.length;i++){
+    calculateAverageAtRow(i,1,2);
+  }
   
+  //calculate bests
+  checkBests();
+}
+
+
+function popUp1DNFClick(buttonIndex){
+  //same thing as +2 click, with different variables
+  //(i could have used a function that takes in the variables as parameters but too much thinking)
+
+  //need the index of the button clicked
+  //when the button is clicked to open the popup, I will give the DNF button
+  //an onclick to this function, and the buttonIndex as a parameter
+  console.log("DNF button index is: ",buttonIndex);
+
+  const add2Button = document.querySelector(".add2Button");
+  const DNFButton = document.querySelector(".add2Button");
+  //i need to keep track if the button is clicked or not (toggle DNF)
+  //i made an array called DNFArray
+  //everytime a row is made, the DNFArray at that index should be set to -1
+
+
+  console.log("DNFArray: ",DNFArray[buttonIndex]);
+  //if -1 or unclicked, make it clicked
+  if (DNFArray[buttonIndex]==-1){
+    DNFArray[buttonIndex]*=-1;
+    //becomes clicked
+    DNFButton.classList.add("button3Clicked");
+    DNFButton.classList.remove("button3");
+    //add +2 to text and time 
+    DNFtoTime();
+
+  } else {
+    DNFArray[buttonIndex]*=-1;
+    //becomes unclicked
+    DNFButton.classList.add("button3");
+    DNFButton.classList.remove("button3Clicked");
+    //reset DNF to text and time 
+    resetDNFtoTime();
+
+  }
+  //add2 becomes unclicked if it was clicked
+  if (add2Array[buttonIndex]==1){
+    add2Button.classList.remove("button3Clicked");
+    add2Button.classList.add("button3");
+    add2Array[buttonIndex]=-1;
+    //reset add2 to text and time 
+    resetAdd2toTime();
+  }
+
+  refreshTimes();
+
+}
+function popUp1BackClick(){
+  console.log("back1");
+  //hide popup1
+  document.querySelector(".popUp1").classList.add("hidden");
 }
 function popUp1DeleteClick(){
   
@@ -763,5 +1224,165 @@ function popUp1DeleteClick(){
 
 //pop up 2 clicks
 function popUp2BackClick(){
+  console.log("back2");
+  //hide popup2 (in case it was open)
+  document.querySelector(".popUp2").classList.add("hidden");
+}
 
+
+function averageTimerClick(averageNum, averageTimeText){
+  //if a time exists
+  console.log("averageNum",averageNum);
+  console.log("length is ",averageTimeText.length);
+
+  if (averageTimeText.length>=averageNum){
+    //show popup2
+    document.querySelector(".popUp2").classList.remove("hidden");
+    //hide popup1 (in case it was open)
+    document.querySelector(".popUp1").classList.add("hidden");
+
+    //now i set the proper values
+    //average of
+    document.querySelector(".popUp2AverageText").innerHTML=
+    "Current Average of "
+    +averageNum
+    +": "
+    +averageTimeText[numberOfRows-1];
+
+    //now i need the scrambles and times using a for loop
+    let text = "Time List: ";
+    let lowestAverageArray = ao5Lowest;
+    let highestAverageArray = ao5Highest;
+    console.log("ao5Lowest: "+ao5Lowest);
+
+
+    if (averageNum==12){
+      lowestAverageArray=ao12Lowest;
+      highestAverageArray=ao12Highest;
+    }
+    let counter = 1;
+    for (let i=numberOfRows-averageNum;i<numberOfRows;i++){
+      //add the scramble number and an enter
+      text+="<br>"+counter.toString()+". ";
+      counter++;
+
+      //console.log("timeArray: "+timeArray[firstColumnIndex-i]);
+      //console.log("lowest "+lowestAverageArray[firstColumnIndex]);
+
+      console.log("timeArray[i] ",timeArray[i],"lowestAverageArray[i]",lowestAverageArray[i]);
+      console.log(lowestAverageArray);
+
+      let numberOfLowestNums = 0;
+      let numberOfHighestNums = 0;
+      //if highest number or lowest number
+      if(timeArray[i]==lowestAverageArray[numberOfRows-1]
+        &&numberOfLowestNums==0){
+        //add a bracket
+        text+="(";
+        console.log("lowest or highest");
+      } else if(timeArray[i]==highestAverageArray[numberOfRows-1]
+        &&numberOfHighestNums==0){
+        //add a bracket
+        text+="(";
+        console.log("lowest or highest");
+      } 
+      //time
+      text+=timerTextArray[i];
+
+      if(timeArray[i]==lowestAverageArray[numberOfRows-1]
+        &&numberOfLowestNums==0){
+        //add a bracket
+        text+=")";
+        console.log("lowest or highest");
+        //to make sure no duplicate brackets if more than one lowest value
+        numberOfLowestNums++;
+      } else if(timeArray[i]==highestAverageArray[numberOfRows-1]
+        &&numberOfHighestNums==0){
+        //add a bracket
+        text+=")";
+        console.log("lowest or highest");
+        //to make sure no duplicate brackets if more than one highest value
+        numberOfHighestNums++;
+      } 
+
+      //add the scramble
+      text+=" "+scrambleArray[i];
+    }
+    console.log(text);
+    document.querySelector(".popUp2ScrambleText").innerHTML=text;
+  }
+
+  
+}
+
+function convertToTimeText(time){
+  let text = "";
+  /*
+  //Text is set to hundreths
+  if (time/6000>=1){
+    //console.log("minutes");
+
+    //the seconds after a minute is written 1:01:00 not 1:1:00
+    //So I must check if the remainder is less than 1000 (or 10 seconds)
+    //If yes, add a '0' string before the remaning seconds
+    if((time%6000)<1000){
+      //if less than 10 seconds add a 0 before the seconds
+      timeText = (Math.floor((time/6000))).toString() //minutes
+      +":"+
+      "0"+
+      ((time%6000)/100);//seconds
+    } else {
+      timeText = (Math.floor((time/6000))).toString() //minutes
+      +":"+
+      ((time%6000)/100);//seconds
+    }
+  } else {
+    //otherwise, just show the seconds
+    timeText = (time/100).toString();
+  }
+  
+  if (time%100==0){
+    //if multiple of 100 add a 00 at the end
+    timeText+=".00";
+  } else 
+  //4 seconds should be 4.10 not 4.1
+  if (timerCounter%10==0){
+    //if multiple of 10 add a 0 at the end
+    timeText+="0";
+  }
+*/
+
+ //Must account for minutes:
+//If the timerCounter / 600 is 1 or greater, change the text by showing minutes ':' and leftover seconds
+if (time/6000>=1){
+  //console.log("minutes");
+
+  //the seconds after a minute is written 1:01:00 not 1:1:00
+  //So I must check if the remainder is less than 100 (or 10 seconds)
+  //If yes, add a '0' string before the remaning seconds
+  let zero = "";
+  if((time%6000)<1000){
+    //if less than 10 seconds add a 0 before the seconds
+    zero = "0";
+  }
+  text = (Math.floor((time/6000))).toString() //minutes
+  +":"+
+  zero+
+  ((time%6000)/100);//seconds
+
+} else {
+  //otherwise, just show the seconds
+  text = (time/100).toString();
+}
+
+//6 seconds is written 6:0 not 6
+//So, if time is a multiple of 10, then add .0 at the end
+if ((time)%100==0){
+  text+=".00";
+} else if ((time)%10==0){
+  text+="0";
+}
+
+  //returns text
+  return(text);
 }
