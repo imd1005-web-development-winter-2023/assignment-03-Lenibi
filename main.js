@@ -69,7 +69,8 @@ let bestIndex= [0,0,0];
 let add2Array = [];
 //must keep track of which times have a DNF
 let DNFArray = [];
-
+let DNFao5Array = [];
+let DNFao12Array = [];
 
 //Making the timer
 document.addEventListener("keydown",function(event){
@@ -327,14 +328,16 @@ function calculateAverageAtRow(rowIndex,start,end){
 
 
       //variables average for loop
-      let averageArray = []; 
-      let averageTextArray = []; 
-  
+      let averageArray = [ao5Array,ao12Array]; 
+      let averageTextArray = [ao5TextArray,ao12TextArray]; 
   
       let averageSize= [5,12];
       let buttonIndex = [2,3];
-  
       
+      //to keep track of how many DNFs
+      let DNFCounter = 0;
+      let DNFArraysArray = [DNFao5Array,DNFao12Array];
+
       let averageToCheck=[ao5Array,ao12Array];
       //if averageSize or more times currently (ao5 only starts after 5 times and ao12 starts after 12 times)
       if(timeArray.length>=averageSize[j]){
@@ -370,6 +373,18 @@ function calculateAverageAtRow(rowIndex,start,end){
         for(let i=1; i<averageSize[j];i++){ 
           if (tempTimes[i]>highestNum){
             highestNum=tempTimes[i];
+            highestNumIndex=i;
+          }
+        }
+        //checking for DNFs
+        //DNF will always be the highest (dropped)
+        //If there are 2 or more DNFs, the average is invalid
+        for(let i=rowIndex;i>rowIndex-averageSize[j];i--){
+          console.log("DNF check",i);
+          if (DNFArray[i]==1){
+            //if DNF
+            DNFCounter++;
+            highestNum=DNFArray[i];
             highestNumIndex=i;
           }
         }
@@ -457,42 +472,49 @@ function calculateAverageAtRow(rowIndex,start,end){
       }
       */
       
-      //Now that the average time has been converted into text format,
-      //I place that value in the array
-        averageTextArray[rowIndex]=averageText;
+        //Now that the average time has been converted into text format,
+        //I place that value in the array
+        averageTextArray[j][rowIndex]=averageText;
+        /*
         //placing into exterior array
-      if (j==0){
-        ao5TextArray[rowIndex]=averageText;
-      } else {
-        ao12TextArray[rowIndex]=averageText;
-      }
+        if (j==0){
+          ao5TextArray[rowIndex]=averageText;
+        } else {
+          ao12TextArray[rowIndex]=averageText;
+        }*/
   
       } else {
         //if not at least averageSize numbers, the value is -
-        averageArray[rowIndex]="-";
-        averageTextArray[rowIndex]="-";
         //placing into exterior array
-      if (j==0){
-        ao5TextArray[rowIndex]="-";
-      } else {
-        ao12TextArray[rowIndex]="-";
+        averageArray[j][rowIndex]="-";
+        averageTextArray[j][rowIndex]="-";
+        /*
+        if (j==0){
+          ao5TextArray[rowIndex]="-";
+        } else {
+          ao12TextArray[rowIndex]="-";
+        }*/
       }
+
+
+      console.log("DNFCounter=",DNFCounter);
+      //however if 2 or more DNFs, the average text should become DNF
+      if (DNFCounter>=2){
+        averageTextArray[j][rowIndex]+="(DNF)";
+        DNFArraysArray[j]=1;
       }
-  
-      
+      let timeAsText = averageTextArray[j][rowIndex];
+      console.log("timeAstext",timeAsText);
       //setting the time text from array onto the button
-      buttonsArray[buttonIndex[j]+(rowIndex*4)].innerHTML=(averageTextArray[rowIndex]).toString();
+      buttonsArray[buttonIndex[j]+(rowIndex*4)].innerHTML=timeAsText;
       //setting the time text from array onto the middle text
       const ao5Text = document.getElementsByClassName("ao5")[0];
       const ao12Text = document.getElementsByClassName("ao12")[0];
       if (j==0){
-        ao5Text.innerHTML="Ao5: "+((averageTextArray[rowIndex]).toString());
+        ao5Text.innerHTML="Ao5: "+timeAsText;
       } else {
-        ao12Text.innerHTML="Ao12: "+((averageTextArray[rowIndex]).toString());
-      } 
-      
-
-      
+        ao12Text.innerHTML="Ao12: "+timeAsText;
+      }       
     }
 }
 
@@ -578,34 +600,74 @@ function checkBests(){
   let buttonsArray = [bestTimeButton,bestAo5Button,bestAo12Button];
   let bestSizeArray = [0,4,11];
   
+  //let DNFArraysArray = [DNFArray,DNFao5Array,DNFao12Array];
 
+  // console.log("besttime",bestTime);
+  // console.log("besttao5",bestAo5);
+  // console.log("besttao12",bestAo12);
   let bestTimeArray = [bestTime,bestAo5,bestAo12];
-  for(let i = 0; i<3;i++){
+  for(let i = 0; i<3; i++){
+
+    console.log("array i",arrays[i]);
+    //console.log("hello");
+    //console.log("AAAAAAAAAAAAAAAAAAAAAAAAAA time around",i);
     //If there is at least 1 bestSize time
     let bestIndexTemp = bestSizeArray[i];
     if(lengthArray[i]>bestSizeArray[i]){
-      console.log("I GOT IN",i);
+      //console.log("I GOT IN",i);
+
       //checking time
       bestTimeArray[i]=arrays[i][bestSizeArray[i]];
 
       //must keep track of index
       //let index = bestSizeArray[i];
+      let DNFCounter=0;
       for(let j = bestSizeArray[i]; j<lengthArray[i];j++){
+        //console.log("////////////////////////////////",j);
+        //if lowest number
         if(arrays[i][j]<bestTimeArray[i]){
-          //if a time is the smallest, it will become the new best
+          //if a number exists at dnf array
+          //console.log("DNFArraysArray[i]",DNFArraysArray[i],DNFArraysArray[i].length,">","bestSizeArray[i]",bestSizeArray[i]);
+          // if (DNFArraysArray[i][j]!=1){
+          //   //if a number exists at dnf array index and not a dnf and lowest num
+            
+          // }
+
+          
+
+          //it becomes the new best
           bestTimeArray[i]=arrays[i][j];
           //bestSizeArray[i]=index;  
           bestIndexTemp=j;
         }
-        //index++;
+        /*
+        if (DNFArraysArray[i].length>bestSizeArray[i]){
+          if (DNFArray[j]==1){
+            DNFCounter++;
+          }
+        }*/
+        
       }
       //change button text
+      //console.log("++++++++++++++++++++++++++++++bestindextemp",bestIndexTemp);
       bestIndex[i]=bestIndexTemp;
       buttonsArray[i].innerHTML=textArrays[i][bestIndexTemp];
+      //if all the times are DNF, chanege the best text to DNF
+      if (DNFCounter==arrays[i].length-bestSizeArray[i]){
+        buttonsArray[i].innerHTML="DNF";
+      }
+
+      // if (i=1){
+      //   console.log("i is 1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      //   console.log("ao5Array",ao5Array);
+      //   console.log("ao5ArrayText",ao5TextArray);
+      //   console.log("bestAo5",bestAo5);
+      //   console.log("bestIndexTemp",bestIndexTemp);
+      //   console.log("DNFao5Array",DNFao5Array);
+      // }
     }
   }
- }
-  
+}  
 function clearSession(){
   if (confirm("Clear Session?")) {
     //remove all children from session ul
@@ -1064,6 +1126,21 @@ function popUp1ChangeButtonClick(buttonIndex,buttonType){
   //an onclick to this function, and the buttonIndex as a parameter
   console.log("button index is: ",buttonIndex);
 
+
+  //other button becomes unclicked
+  if (changeButton.array2[buttonIndex]==1){
+    changeButton.button2.classList.remove("button3Clicked");
+    changeButton.button2.classList.add("button3");
+    changeButton.array2[buttonIndex]=-1;
+    //reset the other button (only 1 can be clicked at once)
+    if (changeButton.functions==0){
+      resetDNFtoTime(buttonIndex);
+    } else {
+      resetAdd2toTime(buttonIndex);
+    }
+  }
+
+
   //i need to keep track if the button is clicked or not (toggle +2)
   //i made an array called add2Array
   //everytime a row is made, the add2Array at that index should be set to -1
@@ -1096,18 +1173,7 @@ function popUp1ChangeButtonClick(buttonIndex,buttonType){
       resetDNFtoTime(buttonIndex);
     }
   }
-  //DNF becomes unclicked if it was clicked
-  if (changeButton.array2[buttonIndex]==1){
-    changeButton.button2.classList.remove("button3Clicked");
-    changeButton.button2.classList.add("button3");
-    changeButton.array2[buttonIndex]=-1;
-    //reset the other button (only 1 can be clicked at once)
-    if (changeButton.functions==0){
-      resetDNFtoTime(buttonIndex);
-    } else {
-      resetAdd2toTime(buttonIndex);
-    }
-  }
+  
   refreshTimes();
 }
 
@@ -1130,21 +1196,78 @@ function add2toTime(buttonIndex){
 
   //set text on the button
   buttonsArray[buttonIndex*4+1].innerHTML=timerTextArray[buttonIndex];
-  
+  //set the text to the popUp1
+  document.querySelector(".popUp1SolveText").innerHTML=  
+  "Solve "+ (buttonIndex+1).toString()+": "+
+  timerTextArray[buttonIndex];
+
   //now must calculate the averages and set update the list texts
   refreshTimes();
-
 }
 
 
 function resetAdd2toTime(buttonIndex){
+  console.log("resetAdd2Time");
 
+  console.log("before",timeArray[buttonIndex]);
+  //subtract 200 to the time
+  timeArray[buttonIndex]-=200;
+  console.log("after",timeArray[buttonIndex]);
+  
+  console.log("before",timerTextArray[buttonIndex]);
+  //now change the time text
+  timerTextArray[buttonIndex]=convertToTimeText(timeArray[buttonIndex])
+  console.log("after",timerTextArray[buttonIndex]);
+
+  //set text on the button
+  buttonsArray[buttonIndex*4+1].innerHTML=timerTextArray[buttonIndex];
+  //set the text to the popUp1
+  document.querySelector(".popUp1SolveText").innerHTML=  
+  "Solve "+ (buttonIndex+1).toString()+": "+
+  timerTextArray[buttonIndex];
+
+  //now must calculate the averages and set update the list texts
+  refreshTimes();
 }
 function DNFtoTime(buttonIndex){
+  console.log("DNFtoTime");
+  
+  console.log("before",timerTextArray[buttonIndex]);
+  //now change the time text
+  timerTextArray[buttonIndex]=
+  //time
+  convertToTimeText(timeArray[buttonIndex])
+  //add (+2) to indicate that this is an edited time
+  +"(DNF)";
+  console.log("after",timerTextArray[buttonIndex]);
 
+  //set text on the button
+  buttonsArray[buttonIndex*4+1].innerHTML=timerTextArray[buttonIndex];
+  //set the text to the popUp1
+  document.querySelector(".popUp1SolveText").innerHTML=  
+  "Solve "+ (buttonIndex+1).toString()+": "+
+  timerTextArray[buttonIndex];
+
+  //now must calculate the averages and set update the list texts
+  refreshTimes();
 }
 function resetDNFtoTime(buttonIndex){
+  console.log("resetDNFtoTime");
   
+  console.log("before",timerTextArray[buttonIndex]);
+  //now change the time text
+  timerTextArray[buttonIndex]=convertToTimeText(timeArray[buttonIndex])
+  console.log("after",timerTextArray[buttonIndex]);
+
+  //set text on the button
+  buttonsArray[buttonIndex*4+1].innerHTML=timerTextArray[buttonIndex];
+  //set the text to the popUp1
+  document.querySelector(".popUp1SolveText").innerHTML=  
+  "Solve "+ (buttonIndex+1).toString()+": "+
+  timerTextArray[buttonIndex];
+
+  //now must calculate the averages and set update the list texts
+  refreshTimes();
 }
 function refreshTimes(){
   //calculate averages
