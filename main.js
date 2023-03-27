@@ -1,5 +1,3 @@
-
-
 let spaceStillDown = false;
 let timerIsReady = false;
 let counter = 0;
@@ -174,6 +172,10 @@ document.addEventListener("keydown",function(event){
 
           //Reset the time
           timerCounter=0;
+        
+          //hide the tempState (picture that shows when empty list)
+          document.querySelector(".temp").remove();
+          
         }
 
         
@@ -301,6 +303,10 @@ function addListRow(timeText){
   //Time
   buttonsArray[1+(numberOfRows*4)].innerHTML=timeText.toString();
   
+  //+2Array and DNF array
+  add2Array[numberOfRows]=-1;
+  DNFArray[numberOfRows]=-1;
+  
   //Calculate the averages
   calculateAverageAtRow(numberOfRows,0,2);
 
@@ -313,209 +319,222 @@ function addListRow(timeText){
   //get a new scramble
   nextButtonClick();
 
-  //+2Array and DNF array
-  add2Array[numberOfRows]=-1;
-  DNFArray[numberOfRows]=-1;
-
   //adding 1 to the row counter
   numberOfRows++;
 }
 
 
 function calculateAverageAtRow(rowIndex,start,end){
-    //calculating ao5 and ao12 using a for loop of 2 because same thing with different variables and values
-    for (let j=start;j<end;j++){
+  //calculating ao5 and ao12 using a for loop of 2 because same thing with different variables and values
+  for (let j=start;j<end;j++){
 
+    //variables average for loop
+    let averageArray = [ao5Array,ao12Array]; 
+    let averageTextArray = [ao5TextArray,ao12TextArray]; 
 
-      //variables average for loop
-      let averageArray = [ao5Array,ao12Array]; 
-      let averageTextArray = [ao5TextArray,ao12TextArray]; 
-  
-      let averageSize= [5,12];
-      let buttonIndex = [2,3];
-      
-      //to keep track of how many DNFs
-      let DNFCounter = 0;
-      let DNFArraysArray = [DNFao5Array,DNFao12Array];
+    let averageSize= [5,12];
+    let buttonIndex = [2,3];
+    
+    //to keep track of how many DNFs
+    let DNFCounter = 0;
+    let DNFArraysArray = [DNFao5Array,DNFao12Array];
 
-      let averageToCheck=[ao5Array,ao12Array];
-      //if averageSize or more times currently (ao5 only starts after 5 times and ao12 starts after 12 times)
-      if(timeArray.length>=averageSize[j]){
-        console.log("5 or more");
-        //calculate average
-        //Cubing averages are not a simple mean,
-        //the highest and lowest values are dropped
-        //i will put all values in a new array to not change the original ones
-        let tempTimes = [];
-        for(let i=0; i<averageSize[j];i++){
-          //console.log((timeArray[numberOfRows-4+i]).toString());
-          //getting the averageSize most recent values into an array
-          tempTimes[i]=timeArray[rowIndex-averageSize[j]+1+i];
-        }
-        
-        console.log(tempTimes);
-        
-        //finding lowest number and setting to -1
-        let lowestNum = tempTimes[0];
-        let lowestNumIndex = 0;
-        for(let i=1; i<averageSize[j];i++){ 
-          if (tempTimes[i]<lowestNum){
-            lowestNum=tempTimes[i];
-            lowestNumIndex=i;
-          }
-        }
-        console.log("lowest: "+lowestNum);
-        tempTimes[lowestNumIndex]=-1;
-        
-        //finding highest number and setting to -1
-        let highestNum = tempTimes[0];
-        let highestNumIndex = 0;
-        for(let i=1; i<averageSize[j];i++){ 
-          if (tempTimes[i]>highestNum){
-            highestNum=tempTimes[i];
-            highestNumIndex=i;
-          }
-        }
-        //checking for DNFs
-        //DNF will always be the highest (dropped)
-        //If there are 2 or more DNFs, the average is invalid
-        for(let i=rowIndex;i>rowIndex-averageSize[j];i--){
-          console.log("DNF check",i);
-          if (DNFArray[i]==1){
-            //if DNF
-            DNFCounter++;
-            highestNum=DNFArray[i];
-            highestNumIndex=i;
-          }
-        }
-        console.log("highest: "+highestNum);
-        tempTimes[highestNumIndex]=-1;
-        
-  
-        console.log(tempTimes);
-        
-        //store the highest and lowest for the popups when clicked
-        if(averageSize[j]==5){
-          ao5Lowest[numberOfRows]=lowestNum;
-          ao5Highest[numberOfRows]=highestNum;
+    let averageToCheck=[ao5Array,ao12Array];
+    //if averageSize or more times currently (ao5 only starts after 5 times and ao12 starts after 12 times)
+    if(timeArray.length>=averageSize[j]){
+      console.log("5 or more");
+      //calculate average
+      //Cubing averages are not a simple mean,
+      //the highest and lowest values are dropped
+      //i will put all values in a new array to not change the original ones
+      let tempTimes = [];
+      for(let i=0; i<averageSize[j];i++){
+        //console.log((timeArray[numberOfRows-4+i]).toString());
+        //getting the averageSize most recent values into an array
+        //console.log("i",i);
+        //console.log("rowIndex-averageSize[j]+i-1",rowIndex-averageSize[j]+i+1);
+        //console.log("DNFArray[rowIndex-averageSize[j]+i]",DNFArray[rowIndex-averageSize[j]+i+1]);
+        if (DNFArray[rowIndex-averageSize[j]+i+1]==-1){
+          //if not DNF
+          tempTimes[i]=timeArray[rowIndex-averageSize[j]+i];
         } else {
-          ao12Lowest[numberOfRows]=lowestNum;
-          ao12Highest[numberOfRows]=highestNum;
+          // if DNF
+          //console.log("i is DNF",i);
+          DNFCounter++;
+          tempTimes[i]=99999999;
         }
-
-        // I can find the mean with the highest and lowest values dropped
-        
-        let sum = 0;
-        let newAverage = 0;
-        for(let i=0; i<averageSize[j];i++){
-          //adding the numbers and ignoring -1
-          if(tempTimes[i]!=-1){
-            sum+=tempTimes[i];
-          }
-          
-        }
-        //dividing the sum by averageSize-2
-        newAverage = sum/(averageSize[j]-2);
-        //no decimal places and rounding
-        //console.log("before: "+newAo5);
-        newAverage = newAverage.toFixed(0);
-        //console.log("after: "+newAo5);
-  
-        //storing the value in the array
-        averageArray[numberOfRows]=newAverage;
-        averageToCheck[j][numberOfRows]=newAverage;
-  
-        //this is hundreths, i need seconds, and i need to convert this to time text format
-        let averageText = convertToTimeText(newAverage);
-
-
-
-
-
-        
-        //using code from earlier to convert time to text
-  
-  
-      //console.log(timerCounterTenths);
-
+      }
       
-  /*
-      //Must account for minutes:
-      //If the timerCounter / 600 is 1 or greater, change the text by showing minutes ':' and leftover seconds
-      if (newAverage/6000>=1){
-        //console.log("minutes");
-  
-        //the seconds after a minute is written 1:01:00 not 1:1:00
-        //So I must check if the remainder is less than 100 (or 10 seconds)
-        //If yes, add a '0' string before the remaning seconds
-        let zero = "";
-        if((newAverage%6000)<1000){
-          //if less than 10 seconds add a 0 before the seconds
-          zero = "0";
+      console.log("temptimes------------------------------------------", tempTimes);
+      
+      //finding lowest number and setting to -1
+      let lowestNum = tempTimes[0];
+      let lowestNumIndex = 0;
+
+      for(let i=1; i<averageSize[j];i++){ 
+        if (tempTimes[i]<lowestNum){
+          lowestNum=tempTimes[i];
+          lowestNumIndex=i;
         }
-        averageText = (Math.floor((newAverage/6000))).toString() //minutes
-        +":"+
-        zero+
-        ((newAverage%6000)/100);//seconds
-  
+      }
+      console.log("---------------------------------------lowest: "+lowestNum);
+      tempTimes[lowestNumIndex]=0;
+      
+      //finding highest number and setting to -1
+      let highestNum = tempTimes[0];
+      let highestNumIndex = 0;
+      for(let i=1; i<averageSize[j];i++){ 
+        if (tempTimes[i]>highestNum){
+          highestNum=tempTimes[i];
+          highestNumIndex=i;
+        }
+      }
+      //checking for DNFs
+      //DNF will always be the highest (dropped)
+      //If there are 2 or more DNFs, the average is invalid
+     /* for(let i=rowIndex;i>rowIndex-averageSize[j];i--){
+        console.log("DNF check",i);
+        if (DNFArray[i]==1){
+          //if DNF
+          DNFCounter++;
+          highestNum=tempTimes[i];
+          highestNumIndex=i;
+        }
+      }*/
+      console.log("----------------------------------highest: "+highestNum);
+      tempTimes[highestNumIndex]=0;
+      
+
+      console.log(tempTimes);
+      
+      //store the highest and lowest for the popups when clicked
+      if(averageSize[j]==5){
+        ao5Lowest[numberOfRows]=lowestNumIndex;
+        ao5Highest[numberOfRows]=highestNumIndex;
       } else {
-        //otherwise, just show the seconds
-        averageText = (newAverage/100).toString();
+        ao12Lowest[numberOfRows]=lowestNumIndex;
+        ao12Highest[numberOfRows]=highestNumIndex;
       }
-  
-      //6 seconds is written 6:0 not 6
-      //So, if time is a multiple of 10, then add .0 at the end
-      if ((newAverage)%100==0){
-        averageText+=".00";
-      } else if ((newAverage)%10==0){
-        averageText+="0";
-      }
-      */
+
+      // I can find the mean with the highest and lowest values dropped
       
-        //Now that the average time has been converted into text format,
-        //I place that value in the array
-        averageTextArray[j][rowIndex]=averageText;
-        /*
-        //placing into exterior array
-        if (j==0){
-          ao5TextArray[rowIndex]=averageText;
-        } else {
-          ao12TextArray[rowIndex]=averageText;
-        }*/
-  
-      } else {
-        //if not at least averageSize numbers, the value is -
-        //placing into exterior array
-        averageArray[j][rowIndex]="-";
-        averageTextArray[j][rowIndex]="-";
-        /*
-        if (j==0){
-          ao5TextArray[rowIndex]="-";
-        } else {
-          ao12TextArray[rowIndex]="-";
-        }*/
+      let sum = 0;
+      let newAverage = 0;
+      for(let i=0; i<averageSize[j];i++){
+        //adding the numbers and ignoring -1
+        if(tempTimes[i]!=0){
+          sum+=tempTimes[i];
+        }
+        
       }
+      //dividing the sum by averageSize-2
+      newAverage = sum/(averageSize[j]-2);
+      //no decimal places and rounding
+      //console.log("before: "+newAo5);
+      newAverage = newAverage.toFixed(0);
+      //console.log("after: "+newAo5);
 
+      //storing the value in the array
+      averageArray[numberOfRows]=newAverage;
+      averageToCheck[j][numberOfRows]=newAverage;
 
-      console.log("DNFCounter=",DNFCounter);
-      //however if 2 or more DNFs, the average text should become DNF
+      //this is hundreths, i need seconds, and i need to convert this to time text format
+      let averageText = convertToTimeText(newAverage);
       if (DNFCounter>=2){
-        averageTextArray[j][rowIndex]+="(DNF)";
-        DNFArraysArray[j]=1;
+        averageText = "";
       }
-      let timeAsText = averageTextArray[j][rowIndex];
-      console.log("timeAstext",timeAsText);
-      //setting the time text from array onto the button
-      buttonsArray[buttonIndex[j]+(rowIndex*4)].innerHTML=timeAsText;
-      //setting the time text from array onto the middle text
-      const ao5Text = document.getElementsByClassName("ao5")[0];
-      const ao12Text = document.getElementsByClassName("ao12")[0];
-      if (j==0){
-        ao5Text.innerHTML="Ao5: "+timeAsText;
-      } else {
-        ao12Text.innerHTML="Ao12: "+timeAsText;
-      }       
+
+
+
+
+
+      
+      //using code from earlier to convert time to text
+
+
+    //console.log(timerCounterTenths);
+
+    
+  /*
+    //Must account for minutes:
+    //If the timerCounter / 600 is 1 or greater, change the text by showing minutes ':' and leftover seconds
+    if (newAverage/6000>=1){
+      //console.log("minutes");
+
+      //the seconds after a minute is written 1:01:00 not 1:1:00
+      //So I must check if the remainder is less than 100 (or 10 seconds)
+      //If yes, add a '0' string before the remaning seconds
+      let zero = "";
+      if((newAverage%6000)<1000){
+        //if less than 10 seconds add a 0 before the seconds
+        zero = "0";
+      }
+      averageText = (Math.floor((newAverage/6000))).toString() //minutes
+      +":"+
+      zero+
+      ((newAverage%6000)/100);//seconds
+
+    } else {
+      //otherwise, just show the seconds
+      averageText = (newAverage/100).toString();
     }
+
+    //6 seconds is written 6:0 not 6
+    //So, if time is a multiple of 10, then add .0 at the end
+    if ((newAverage)%100==0){
+      averageText+=".00";
+    } else if ((newAverage)%10==0){
+      averageText+="0";
+    }
+    */
+    
+      //Now that the average time has been converted into text format,
+      //I place that value in the array
+      averageTextArray[j][rowIndex]=averageText;
+      /*
+      //placing into exterior array
+      if (j==0){
+        ao5TextArray[rowIndex]=averageText;
+      } else {
+        ao12TextArray[rowIndex]=averageText;
+      }*/
+
+    } else {
+      //if not at least averageSize numbers, the value is -
+      //placing into exterior array
+      averageArray[j][rowIndex]="-";
+      averageTextArray[j][rowIndex]="-";
+      /*
+      if (j==0){
+        ao5TextArray[rowIndex]="-";
+      } else {
+        ao12TextArray[rowIndex]="-";
+      }*/
+    }
+
+
+    console.log("DNFCounter=",DNFCounter);
+    //however if 2 or more DNFs, the average text should become DNF
+    if (DNFCounter>=2){
+      averageTextArray[j][rowIndex]+="(DNF)";
+      DNFArraysArray[j][rowIndex]=1;
+    } else {
+      DNFArraysArray[j][rowIndex]=-1;
+    }
+    let timeAsText = averageTextArray[j][rowIndex];
+    console.log("timeAstext",timeAsText);
+    //setting the time text from array onto the button
+    buttonsArray[buttonIndex[j]+(rowIndex*4)].innerHTML=timeAsText;
+    //setting the time text from array onto the middle text
+    const ao5Text = document.getElementsByClassName("ao5")[0];
+    const ao12Text = document.getElementsByClassName("ao12")[0];
+    if (j==0){
+      ao5Text.innerHTML="Ao5: "+timeAsText;
+    } else {
+      ao12Text.innerHTML="Ao12: "+timeAsText;
+    }     
+    console.log(j,"DNFArraysArray[j]",DNFArraysArray[j])  
+  }
 }
 
 function checkBests(){
@@ -600,28 +619,40 @@ function checkBests(){
   let buttonsArray = [bestTimeButton,bestAo5Button,bestAo12Button];
   let bestSizeArray = [0,4,11];
   
-  //let DNFArraysArray = [DNFArray,DNFao5Array,DNFao12Array];
+  let DNFArraysArray = [DNFArray,DNFao5Array,DNFao12Array];
 
   // console.log("besttime",bestTime);
   // console.log("besttao5",bestAo5);
   // console.log("besttao12",bestAo12);
   let bestTimeArray = [bestTime,bestAo5,bestAo12];
   for(let i = 0; i<3; i++){
-
+    let DNFCounter=0;
     console.log("array i",arrays[i]);
     //console.log("hello");
     //console.log("AAAAAAAAAAAAAAAAAAAAAAAAAA time around",i);
     //If there is at least 1 bestSize time
     let bestIndexTemp = bestSizeArray[i];
     if(lengthArray[i]>bestSizeArray[i]){
-      //console.log("I GOT IN",i);
+      console.log("I GOT IN-----------------------------------------------",i);
 
       //checking time
-      bestTimeArray[i]=arrays[i][bestSizeArray[i]];
+      for(let k=bestSizeArray[i];k<lengthArray[i];k++){
+        console.log("k",k);
+        console.log("DNFArraysArray[i]",DNFArraysArray[i]);
+        console.log("DNFArraysArray[i][k]",DNFArraysArray[i][k]);
+        if ((DNFArraysArray[i][k])==-1){
+          bestTimeArray[i]=arrays[i][k];
+          break;
+        } else {
+          DNFCounter++;
+        }
+      }
+      console.log("DNFCounter",DNFCounter);
+      
 
       //must keep track of index
       //let index = bestSizeArray[i];
-      let DNFCounter=0;
+      
       for(let j = bestSizeArray[i]; j<lengthArray[i];j++){
         //console.log("////////////////////////////////",j);
         //if lowest number
@@ -633,26 +664,20 @@ function checkBests(){
             
           // }
 
-          
+
 
           //it becomes the new best
           bestTimeArray[i]=arrays[i][j];
           //bestSizeArray[i]=index;  
           bestIndexTemp=j;
         }
-        /*
-        if (DNFArraysArray[i].length>bestSizeArray[i]){
-          if (DNFArray[j]==1){
-            DNFCounter++;
-          }
-        }*/
         
       }
       //change button text
       //console.log("++++++++++++++++++++++++++++++bestindextemp",bestIndexTemp);
       bestIndex[i]=bestIndexTemp;
       buttonsArray[i].innerHTML=textArrays[i][bestIndexTemp];
-      //if all the times are DNF, chanege the best text to DNF
+      //if all the times are DNF, change the best text to DNF
       if (DNFCounter==arrays[i].length-bestSizeArray[i]){
         buttonsArray[i].innerHTML="DNF";
       }
@@ -670,6 +695,10 @@ function checkBests(){
 }  
 function clearSession(){
   if (confirm("Clear Session?")) {
+    //hide popups
+    document.querySelector(".popUp1").classList.add("hidden");
+    document.querySelector(".popUp2").classList.add("hidden");
+
     //remove all children from session ul
     let ul = document.getElementById("ulList");
     while (ul.firstChild) {
@@ -706,6 +735,21 @@ function clearSession(){
     //clear middle text
     ao5.innerHTML="Ao5: -";
     ao12.innerHTML="Ao12: -";
+
+    //show the tempState (picture that shows when empty list)
+    //creating li
+    let tempLi = document.createElement("li");
+    tempLi.classList.add("temp");
+    document.querySelector(".sessionMiddleList").appendChild(tempLi);
+    //creating img
+    let tempImg = document.createElement("img");
+    tempImg.setAttribute("src","cube2.png");
+    tempImg.setAttribute("alt","cube");
+    tempLi.appendChild(tempImg);
+    //creating p
+    let tempP = document.createElement("p");
+    tempP.innerHTML="Press the spacebar to start the timer!";
+    tempLi.appendChild(tempP);
   }
 }
 
@@ -840,36 +884,34 @@ function buttonClick(buttonIndex){
         //console.log("lowest "+lowestAverageArray[firstColumnIndex]);
 
         //if highest number or lowest number
-        if(timeArray[firstColumnIndex-i]==lowestAverageArray[firstColumnIndex]&&
+        if(i==lowestAverageArray[firstColumnIndex]&&
           numberOfLowestNums==0){
           //add a bracket
           text+="(";
-          console.log("lowest or highest");
+          console.log("lowest");
           //numberOfLowestNums++;
-        } else if (timeArray[firstColumnIndex-i]==highestAverageArray[firstColumnIndex]&&
+        } else if (i==highestAverageArray[firstColumnIndex]&&
           numberOfHighestNums==0){
            //add a bracket
            text+="(";
-           console.log("lowest or highest");
+           console.log("highest");
            //numberOfHighestNums++;
         }
         //time
         text+=timerTextArray[firstColumnIndex-i];
 
          //if highest number or lowest number
-         if(timeArray[firstColumnIndex-i]==lowestAverageArray[firstColumnIndex]&&
+        if(i==lowestAverageArray[firstColumnIndex]&&
           numberOfLowestNums==0){
           //add a bracket
           text+=")";
-          console.log("lowest or highest");
-          //to make sure no duplicate brackets if more than one lowest value
+          console.log("lowest");
           numberOfLowestNums++;
-        } else if (timeArray[firstColumnIndex-i]==highestAverageArray[firstColumnIndex]&&
+        } else if (i==highestAverageArray[firstColumnIndex]&&
           numberOfHighestNums==0){
            //add a bracket
            text+=")";
-           console.log("lowest or highest");
-           //to make sure no duplicate brackets if more than one highest value
+           console.log("highest");
            numberOfHighestNums++;
         }
 
@@ -1006,7 +1048,7 @@ function bestTimeClick(){
     //hide popup2 (in case it was open)
     document.querySelector(".popUp2").classList.add("hidden");
 
-
+  
     //change the time
     //must access from the array, need the row index
     console.log(bestIndex[0]);
