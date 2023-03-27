@@ -226,7 +226,7 @@ main {
   
 }
 .hidden{
-  opacity:0;
+  display: none;
 }
 
 ul {
@@ -278,8 +278,22 @@ transform: translate(-50%, -50%);
   grid-template-columns: 70% 30%;
 }
 .add2Button, .DNFButton{
+  border: none;
+  width: 100%;
+}
+.button3{
   background-color: var(--lightblue);
 }
+.button3:hover{
+  background-color: var(--blue);
+}
+.button3Clicked{
+  background-color: var(--blue);
+}
+.button3Clicked:hover{
+  background-color: var(--darkblue);
+}
+
 
 
 /*Pop up 2*/
