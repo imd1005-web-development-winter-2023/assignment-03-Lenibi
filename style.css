@@ -20,6 +20,18 @@
   /* Body configuration */
   --body-default-colour: var(--colour-cello);
   --body-background-colour: var(--colour-peppermint);
+
+
+
+  /* My Colours */
+  --darkblue: #18323d;
+  --darkbluehover: #404f56;
+
+  --blue: #43839a;
+  --bluehover: #274b57;
+
+  --lightblue: #c2e8f6;
+  --lightbluehover: #839da6;
 }
 
 /*
@@ -27,9 +39,16 @@
 */
 body {
   font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  /*
   color: var(--body-default-colour);
   background-color: var(--body-background-colour);
+  */
+  background-color: var(--lightblue);
+  /* Make page unscrollable (gets rid of excess page area) */
+  overflow-y: hidden;
 }
+
 
 main {
   min-height: 100vh;
@@ -37,7 +56,342 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+
+ 
 }
+
+/*Custom font*/
+@font-face {
+  font-family: "AlarmClock";
+  src: url(alarm\ clock.ttf);
+}
+
+.quadrants{
+  height: 100%;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: 0.1fr 1fr;
+}
+
+.header {
+  background-color: var(--blue);
+  color: var(--darkblue);
+  display: grid;
+  grid-template-columns: 1fr 0.11fr;
+}
+
+.temp{
+  width: 50%;
+  text-align: center;
+  margin-left: 40px;
+  margin-top: 50px;
+}
+
+.scramble{
+  place-self: center;
+  font-size: 300%;
+}
+.buttons{
+  display: grid;
+}
+.button1{
+  border: none;
+  width: 100%;
+  height: 100%;
+  background-color: var(--darkblue);
+  color: white;
+}
+.button1Clicked{
+  border: none;
+  width: 100%;
+  height: 100%;
+  background-color: var(--blue);
+  color: white;
+}
+.button1:hover{
+  background-color: var(--darkbluehover);
+}
+.button2{
+  border: none;
+  width: 100%;
+  background-color: transparent;
+}
+.button2:hover{
+  background-color: var(--bluehover);
+}
+.button2Blank{
+  border: none;
+  width: 100%;
+  background-color: transparent;
+}
+.list{
+  background-color: var(--blue);
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.sessionTopGrid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.sessionMiddle{
+  
+  overflow-x: hidden;
+  
+  overflow-y: scroll;
+  /*height: 1fr;*/
+  height: 80vh;
+  
+  display: grid;
+}
+
+/*
+  Hiding the scroll bar, but still allowing for scrolling
+*/
+.sessionMiddle::-webkit-scrollbar{
+  display: none;
+}
+
+.sessionMiddleGrid{
+  margin-left: -30px;
+  margin-right: -10px;
+  width: 1fr;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.sessionBottom{
+ 
+}
+
+.logo{
+  background-color: var(--darkblue);
+  display: grid;
+ 
+}
+.logoImage{
+  place-self: center;
+  height: 100px;
+}
+.timer{
+  display: grid;
+  color: var(--darkblue);
+}
+.timerContainer{
+  /*
+  place-self: center;
+  */
+  text-align: center;
+}
+
+.time{
+  margin-top: 8%;
+  font-family: AlarmClock;
+  font-weight: bolder;
+  font-size: 1500%;
+  margin-bottom: -50px;
+}
+
+.averagesContainer{
+  /*border: red solid 1px;*/
+  width: 100%;
+  display: grid;
+}
+
+.ao5, .ao12{
+  font-size: 300%;
+  place-self: center;
+  text-align: center;
+  width: auto;
+}
+
+.sessionTopButtons{
+  display: grid;
+  /*grid-template-columns: 1fr 30%;*/
+}
+
+.ao5:hover, .ao12:hover {
+  background-color: var(--lightbluehover);
+}
+
+.redText{
+  color: red;
+}
+.greenText{
+  color: rgb(0, 255, 0);
+}
+.centered{
+  margin-top: 0%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /*
+  transform: translate(50%, 50%);
+  top: 50%;
+  left: 50%;
+  margin-top: 0px;
+  */
+  
+}
+.hidden{
+  display: none;
+}
+
+ul {
+  list-style-type: none;
+  
+}
+
+.sessionMiddleList{
+  width: 100%;
+}
+.listItem{
+  margin-left: -10px;
+}
+
+/*Pop up code*/
+.popUp1{
+  background-color: white;
+  border: var(--darkblue) solid 2px;
+  position: fixed;
+top: 50%;
+left: 50%;
+
+transform: translate(-50%, -50%);
+}
+
+.popUp1Grid2{
+  margin-left: 10%;
+  margin-right: 10%;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  
+}
+
+.popUp1Back, .popUp1Delete{
+  place-self: center;
+  width: 50%;
+  background-color: var(--blue);
+  text-align: center;
+}
+
+.popUp1Buttons{
+  display: grid;
+  grid-template-columns: auto auto;
+  text-align: center;
+  column-gap: 10px;
+}
+.popUp1Grid{
+  display: grid;
+  grid-template-columns: 70% 30%;
+}
+.add2Button, .DNFButton{
+  border: none;
+  width: 100%;
+}
+.button3{
+  background-color: var(--lightblue);
+}
+.button3:hover{
+  background-color: var(--blue);
+}
+.button3Clicked{
+  background-color: var(--blue);
+}
+.button3Clicked:hover{
+  background-color: var(--darkblue);
+}
+
+
+
+/*Pop up 2*/
+/*Pop up code*/
+.popUp2{
+  background-color: white;
+  border: var(--darkblue) solid 2px;
+  position: fixed;
+top: 50%;
+left: 50%;
+
+transform: translate(-50%, -50%);
+}
+.popUp2Back{
+  place-self: center;
+  width: 30%;
+  background-color: var(--blue);
+  text-align: center;
+}
+
+.popUp2BackContainer{
+  display: grid;
+}
+
+/*
+Borders around sections and divs to help visualize what is going on
+
+section{
+  border: solid red 1px; 
+}
+
+div{
+  border: solid blue 1px; 
+}
+ul{
+  border: solid yellow 1px; 
+}
+li{
+  border: solid green 1px; 
+}
+*/
+
+/*When the screen is less than 800px (for mobile usually)*/
+@media only screen and (max-width: 800px) {
+  .quadrants{
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .header {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-bottom: 30px;
+  }
+  .buttons{
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 50% 50%;
+    height: 40px;
+    margin-top: -10px;
+    margin-bottom: 0px;
+  }
+  .time{
+    font-size: 500%;
+    margin-bottom: -25px;
+    margin-top: -10px;
+  }
+  .ao5, .ao12, .scramble{
+    font-size: 150%;
+  }
+
+  .sessionMiddle{
+    height: 10vh;
+  }
+  .list{
+    margin-top: -98px;
+  }
+  .timerContainer{
+    display: grid;
+    grid-template-columns: auto auto auto;
+  }
+
+  
+}
+
+
+
+
+
+
+
+
 
 /*
   Screen reader text utility class

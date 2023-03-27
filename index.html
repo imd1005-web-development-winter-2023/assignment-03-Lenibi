@@ -17,9 +17,101 @@
     <link rel="stylesheet" href="style.css" />
 
     <!-- Set the Favicon  -->
-    <link rel="icon" href="./images/favicon/rocket.svg" type="image/svg+xml" />
+    <!--./images/favicon/rocket.svg-->
+    <link rel="icon" href="cube2.png" type="image/svg+xml" />
   </head>
   <body>
+    <section class="quadrants">
+        <section class="test logo">
+            <img class="logoImage" src="cubelogo.png" alt="logo">
+        </section>
+        <section class="test header">
+            <div class="scramble">D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R'</div>
+            <section class="buttons">
+              <div class="button1container"><button class="button1Clicked previousButton" onclick="previousButtonClick()">Previous</button></div>
+              <div class="button1container"><button class="button1 nextButton" onclick="nextButtonClick()">Next</button></div>
+            </section>
+        </section>
+        <section class="test list">
+            <section class="sessionTop">
+              <div class="sessionTopButtons"> 
+                <!--<button class="button2 sessionButton">Session 1</button>-->
+                <button class="button2 clearButton" onclick="clearSession()">Clear</button>
+              </div>
+                <section class="sessionTopGrid">
+                  <button class="button2Blank listNum">Num</button>
+                  <button class="button2Blank listTime">Time</button>
+                  <button class="button2Blank listAo5">Ao5</button>
+                  <button class="button2Blank listAo12">Ao12</button>
+                </section>
+                <section class="sessionTopGrid">
+                  <button class="button2Blank best">Best</button>
+                  <button class="button2 bestTime" onclick="bestTimeClick()">-</button>
+                  <button class="button2 bestAo5" onclick="bestAverageClick(5, ao5TextArray, 1)">-</button>
+                  <button class="button2 bestAo12" onclick="bestAverageClick(12, ao12TextArray, 2)">-</button>
+                </section>
+            </section>
+            <section class="sessionMiddle">
+              <ul class="sessionMiddleList" id="ulList">
+                <li class="temp">
+                  <img src="cube2.png" alt="cube">
+                  <p>Press the spacebar to start the timer!</p>
+                </li>
+                <!--
+                <li class="sessionMiddleGrid">
+                  <button class="button2 listItem">1</button>
+                  <button class="button2 listItem">1</button>
+                  <button class="button2 listItem">1</button>
+                  <button class="button2 listItem">1</button>
+                </li>
+                -->
+              </ul>
+              
+            </section>
+            <section class="sessionBottom">
+              <section class="sessionTopGrid">
+                
+              </section>
+              
+          </section>
+        </section>
+        <section class="test timer">
+          <div class="timerContainer">
+            <div class="time">0:00</div>
+            <div class="averagesContainer"><div class="ao5" onclick="averageTimerClick(5,ao5TextArray)">Ao5: -</div></div>
+            <div class="averagesContainer"><div class="ao12" onclick="averageTimerClick(12,ao12TextArray)">Ao12: -</div></div>
+          </div>
+        </section>
+    </section>
+
+    <div class="popUp1 hidden">
+      <section class="popUp1Grid">
+        <div class="popUp1SolveText">Solve 1: 0:00</div>
+        <section class="popUp1Buttons">
+          <button class="add2Button button3" onclick="popUp1add2Click()">+2</button>
+          <button class="DNFButton button3" onclick="popUp1DNFClick()">DNF</button>
+        </section>
+      </section>
+      <div class="popUp1ScrambleText">Scramble: D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R'</div>
+      <section class="popUp1Grid2">
+        <button class="popUp1Back button2" onclick="popUp1BackClick()">Back</button>
+        <!--<button class="popUp1Delete button2" onclick="popUp1DeleteClick()">Delete</button>-->
+      </section>
+    </div>
+
+    <div class="popUp2 hidden">
+      <div class="popUp2AverageText">Average of 5: 0:00</div>
+      <div class="popUp2ScrambleText">Time List: <br>
+      1. (0.20) D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R' <br>
+      2. 0.20 D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R' <br>
+      3. 0.20 D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R' <br>
+      4. 0.20 D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R' <br>
+      5. (0.20) D2 R2 F D2 B D2 U2 B' D2 B' R2 D' B2 D' F2 R' F2 U' B2 R' <br>
+      </div>
+      <div class="popUp2BackContainer">
+        <button class="popUp2Back button2" onclick="popUp2BackClick()">Back</button>
+      </div>
+    </div>
     <!--
 
       ADD YOUR ASSIGNMENT 03 CODE
